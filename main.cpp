@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+#include "image.h"
+
+Image *image;
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
