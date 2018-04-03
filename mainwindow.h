@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QAction>
 
 #include "image.h"
 
@@ -20,6 +19,18 @@ public:
 
 public slots:
     void open_img();
+    void x_para_1();
+    void x_para_2();
+    void y_para_1();
+    void y_para_2();
+    void z_para_1();
+    void z_para_2();
+    void hide_para(int state);
+    void axis();
+    void hide_axis(int state);
+    void set_x_ref();
+    void set_y_ref();
+    void set_z_ref();
 
 private:
     Ui::MainWindow *ui;
