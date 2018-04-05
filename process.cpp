@@ -87,7 +87,81 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
     vp_z= (svd_M_z.matrixV()).rightCols(1);
     vp_z*=1/(vp_z.z());
 
+    vl_xy=vp_x.cross(vp_y);
+    vl_xy*=1/(vl_xy.z());
+
+    vl_xz=vp_x.cross(vp_z);
+    vl_xz*=1/(vl_xy.z());
+
+    vl_yz=vp_y.cross(vp_z);
+    vl_yz*=1/(vl_xy.z());
+
     (this->origin)<< origin.x, origin.y, 1;
     (this->scale)<< scale[0], scale[1], scale[2];
 
+}
+
+Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
+    Vector3d homo_t, homo_b, l_b_vpx, l_b_vpy, l_b_vpz, x_cross, y_cross, z_cross;
+    homo_t<< T.x, T.y, 1;
+    homo_b<< B.x, B.y, 1;
+
+    l_b_vpx=homo_b.cross(vp_x);
+    l_b_vpy=homo_b.cross(vp_y);
+    l_b_vpz=homo_b.cross(vp_z);
+
+    double x_w, y_w, z_w;
+    x_w=y_w=z_w=0;
+
+    switch(cord){
+        case 0:
+            x_w= -(origin.transpose())*vl_yz*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_yz*((vp_x.cross(homo_t)).norm())*scale.x());
+
+            y_cross=l_b_vpz.cross(origin.cross(vp_y));
+            y_cross*=1/y_cross.z();
+
+            z_cross=l_b_vpy.cross(origin.cross(vp_z));
+            z_cross*=1/z_cross.z();
+
+            y_w= -(origin.transpose())*vl_xz*((z_cross.cross(homo_b)).norm())/((z_cross.transpose())*vl_xz*((vp_y.cross(homo_b)).norm())*scale.y());
+
+            z_w= -(origin.transpose())*vl_xy*((y_cross.cross(homo_b)).norm())/((y_cross.transpose())*vl_xy*((vp_z.cross(homo_b)).norm())*scale.z());
+
+            break;
+
+        case 1:
+            y_w= -(origin.transpose())*vl_xz*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_xz*((vp_y.cross(homo_t)).norm())*scale.y());
+
+            x_cross=l_b_vpz.cross(origin.cross(vp_x));
+            x_cross*=1/x_cross.z();
+
+            z_cross=l_b_vpx.cross(origin.cross(vp_z));
+            z_cross*=1/z_cross.z();
+
+            z_w= -(origin.transpose())*vl_xy*((x_cross.cross(homo_b)).norm())/((x_cross.transpose())*vl_xy*((vp_z.cross(homo_b)).norm())*scale.z());
+
+            x_w= -(origin.transpose())*vl_yz*((z_cross.cross(homo_b)).norm())/((z_cross.transpose())*vl_yz*((vp_x.cross(homo_b)).norm())*scale.x());
+
+            break;
+        case 2:
+            z_w= -(origin.transpose())*vl_xy*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_xy*((vp_z.cross(homo_t)).norm())*scale.z());
+
+            x_cross=l_b_vpy.cross(origin.cross(vp_x));
+            x_cross*=1/x_cross.z();
+
+             y_cross=l_b_vpx.cross(origin.cross(vp_y));
+            y_cross*=1/y_cross.z();
+
+            y_w= -(origin.transpose())*vl_xz*((x_cross.cross(homo_b)).norm())/((x_cross.transpose())*vl_xz*((vp_y.cross(homo_b)).norm())*scale.y());
+
+            x_w= -(origin.transpose())*vl_yz*((y_cross.cross(homo_b)).norm())/((y_cross.transpose())*vl_yz*((vp_x.cross(homo_b)).norm())*scale.x());
+
+            break;
+
+        default: break;
+    }
+
+    Vector3d coordinate_w;
+    coordinate_w<< x_w, y_w, z_w;
+    return coordinate_w;
 }
