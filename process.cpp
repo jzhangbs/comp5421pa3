@@ -115,7 +115,7 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
 
     switch(cord){
         case 0:
-            x_w= -(origin.transpose())*vl_yz*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_yz*((vp_x.cross(homo_t)).norm())*scale.x());
+            x_w= -(origin.dot(vl_yz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_yz))*((vp_x.cross(homo_t)).norm())*scale.x());
 
             y_cross=l_b_vpz.cross(origin.cross(vp_y));
             y_cross*=1/y_cross.z();
@@ -123,14 +123,14 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
             z_cross=l_b_vpy.cross(origin.cross(vp_z));
             z_cross*=1/z_cross.z();
 
-            y_w= -(origin.transpose())*vl_xz*((z_cross.cross(homo_b)).norm())/((z_cross.transpose())*vl_xz*((vp_y.cross(homo_b)).norm())*scale.y());
+            y_w= -(origin.dot(vl_xz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
 
-            z_w= -(origin.transpose())*vl_xy*((y_cross.cross(homo_b)).norm())/((y_cross.transpose())*vl_xy*((vp_z.cross(homo_b)).norm())*scale.z());
+            z_w= -(origin.dot(vl_xy))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
             break;
 
         case 1:
-            y_w= -(origin.transpose())*vl_xz*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_xz*((vp_y.cross(homo_t)).norm())*scale.y());
+            y_w= -(origin.dot(vl_xz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xz))*((vp_y.cross(homo_t)).norm())*scale.y());
 
             x_cross=l_b_vpz.cross(origin.cross(vp_x));
             x_cross*=1/x_cross.z();
@@ -138,23 +138,23 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
             z_cross=l_b_vpx.cross(origin.cross(vp_z));
             z_cross*=1/z_cross.z();
 
-            z_w= -(origin.transpose())*vl_xy*((x_cross.cross(homo_b)).norm())/((x_cross.transpose())*vl_xy*((vp_z.cross(homo_b)).norm())*scale.z());
+            z_w= -(origin.dot(vl_xy))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
-            x_w= -(origin.transpose())*vl_yz*((z_cross.cross(homo_b)).norm())/((z_cross.transpose())*vl_yz*((vp_x.cross(homo_b)).norm())*scale.x());
+            x_w= -(origin.dot(vl_yz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
 
             break;
         case 2:
-            z_w= -(origin.transpose())*vl_xy*((homo_b.cross(homo_t)).norm())/((homo_b.transpose())*vl_xy*((vp_z.cross(homo_t)).norm())*scale.z());
+            z_w= -(origin.dot(vl_xy))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xy))*((vp_z.cross(homo_t)).norm())*scale.z());
 
             x_cross=l_b_vpy.cross(origin.cross(vp_x));
             x_cross*=1/x_cross.z();
 
-             y_cross=l_b_vpx.cross(origin.cross(vp_y));
+            y_cross=l_b_vpx.cross(origin.cross(vp_y));
             y_cross*=1/y_cross.z();
 
-            y_w= -(origin.transpose())*vl_xz*((x_cross.cross(homo_b)).norm())/((x_cross.transpose())*vl_xz*((vp_y.cross(homo_b)).norm())*scale.y());
+            y_w= -(origin.dot(vl_xz))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
 
-            x_w= -(origin.transpose())*vl_yz*((y_cross.cross(homo_b)).norm())/((y_cross.transpose())*vl_yz*((vp_x.cross(homo_b)).norm())*scale.x());
+            x_w= -(origin.dot(vl_yz))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
 
             break;
 
