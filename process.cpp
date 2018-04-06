@@ -98,6 +98,7 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
 
     (this->origin)<< origin.x, origin.y, 1;
     (this->scale)<< scale[0], scale[1], scale[2];
+    texture_matrix=Matrix3d::Identity();
 
 }
 
@@ -165,3 +166,25 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
     coordinate_w<< x_w, y_w, z_w;
     return coordinate_w;
 }
+
+Matrix3d process::compute_texture_matrix(const vector<cv::Point2i>& image_pts, const vector<cv::Point2i>& origin_pts){
+    Matrix<double, 8, 8> B;
+    B<< image_pts[0].x, image_pts[0].y, 1, 0, 0, 0, -(image_pts[0].x)*(origin_pts[0].x), -(image_pts[0].y)*(origin_pts[0].x),
+        image_pts[1].x, image_pts[1].y, 1, 0, 0, 0, -(image_pts[1].x)*(origin_pts[1].x), -(image_pts[1].y)*(origin_pts[1].x),
+        image_pts[2].x, image_pts[2].y, 1, 0, 0, 0, -(image_pts[2].x)*(origin_pts[2].x), -(image_pts[2].y)*(origin_pts[2].x),
+        image_pts[3].x, image_pts[3].y, 1, 0, 0, 0, -(image_pts[3].x)*(origin_pts[3].x), -(image_pts[3].y)*(origin_pts[3].x),
+
+        0, 0, 0, image_pts[0].x, image_pts[0].y, 1, -(image_pts[0].x)*(origin_pts[0].y), -(image_pts[0].y)*(origin_pts[0].y),
+        0, 0, 0, image_pts[1].x, image_pts[1].y, 1, -(image_pts[1].x)*(origin_pts[1].y), -(image_pts[1].y)*(origin_pts[1].y),
+        0, 0, 0, image_pts[2].x, image_pts[2].y, 1, -(image_pts[2].x)*(origin_pts[2].y), -(image_pts[2].y)*(origin_pts[2].y),
+        0, 0, 0, image_pts[3].x, image_pts[3].y, 1, -(image_pts[3].x)*(origin_pts[3].y), -(image_pts[3].y)*(origin_pts[3].y);
+
+    Vector<double, 8> X;
+    X<< origin_pts[0].x, origin_pts[1].x, origin_pts[2].x, origin_pts[3].x,
+        origin_pts[0].y, origin_pts[1].y, origin_pts[2].y, origin_pts[3].y;
+
+    VectorXd A = (B.inverse())*X;
+    texture_matrix<< A(0), A(3), A(6), A(1), A(4), A(7), A(2), A(5), A(8), A(3), A(7), 1;
+    return texture_matrix;
+}
+
