@@ -18,7 +18,9 @@ class process
 {
 public:
     process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, const vector<cv::Point2i>& y_pts, const vector<cv::Point2i>& z_pts, const cv::Point2i origin, const double scale[3]);
-
+    Vector3d calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord);
+    Matrix3d compute_texture_matrix(const vector<cv::Point2i>& image_pts, const vector<cv::Point2i>& origin_pts);
+    Matrix3d get_texture_matrix(){return texture_matrix;}
 
 private:
     MatrixXd img;
@@ -27,9 +29,15 @@ private:
     Vector3d vp_y;
     Vector3d vp_z;
 
+    Vector3d vl_xy;
+    Vector3d vl_xz;
+    Vector3d vl_yz;
+
     Vector3d origin;
 
     Vector3d scale;
+
+    Matrix3d texture_matrix;
 
 };
 
