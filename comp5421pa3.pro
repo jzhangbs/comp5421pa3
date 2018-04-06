@@ -42,7 +42,8 @@ FORMS += \
 win32{INCLUDEPATH += \
         C:/code/opencv/build/include \
         C:/code/opencv/build/include/opencv \
-        C:/code/opencv/build/include/opencv2}
+        C:/code/opencv/build/include/opencv2 \
+        C:\code\eigen-eigen-5a0156e40feb}
 
 macx{INCLUDEPATH += \
     /usr/local/Cellar/opencv/3.4.0_1/include\
