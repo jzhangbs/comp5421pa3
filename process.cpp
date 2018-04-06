@@ -179,7 +179,7 @@ Matrix3d process::compute_texture_matrix(const vector<cv::Point2i>& image_pts, c
         0, 0, 0, image_pts[2].x, image_pts[2].y, 1, -(image_pts[2].x)*(origin_pts[2].y), -(image_pts[2].y)*(origin_pts[2].y),
         0, 0, 0, image_pts[3].x, image_pts[3].y, 1, -(image_pts[3].x)*(origin_pts[3].y), -(image_pts[3].y)*(origin_pts[3].y);
 
-    Vector<double, 8> X;
+    Matrix<double, 8, 1> X;
     X<< origin_pts[0].x, origin_pts[1].x, origin_pts[2].x, origin_pts[3].x,
         origin_pts[0].y, origin_pts[1].y, origin_pts[2].y, origin_pts[3].y;
 
