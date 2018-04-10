@@ -8,15 +8,21 @@
 
 using namespace std;
 using namespace cv;
+using namespace Eigen;
 
 Image::Image()
 {
     overlay_mode = NORMAL;
     img_opened = false;
     hide_axis = hide_para = false;
+    p = nullptr;
     memset(para_done, 0, 6);
     memset(axis_done, 0, 3);
     memset(ref_done, 0, 3);
+}
+
+Image::~Image() {
+    if (p != nullptr) delete p;
 }
 
 void Image::set_label(QLabel *_label, QLabel *_label_o) {
@@ -28,6 +34,7 @@ void Image::set_label(QLabel *_label, QLabel *_label_o) {
 void Image::act_open(string filename) {
     img = imread(filename);
     cvtColor(img, img, CV_BGR2RGB);
+    cvtColor(img, img_grey, CV_RGB2GRAY);
     show_image();
     img_opened=true;
 }
@@ -185,6 +192,112 @@ void Image::draw_point(int x, int y) {
         overlay_mode = NORMAL;
         axis_done[2] = true;
         break;
+    case PLANE_1_T:
+        plane[0][0] = Point(x, y);
+        overlay_mode = PLANE_1_B;
+        break;
+    case PLANE_1_B:
+        plane[0][1] = Point(x, y);
+        overlay_mode = PLANE_2_T;
+        break;
+    case PLANE_2_T:
+        plane[1][0] = Point(x, y);
+        overlay_mode = PLANE_2_B;
+        break;
+    case PLANE_2_B:
+        plane[1][1] = Point(x, y);
+        overlay_mode = PLANE_3_T;
+        break;
+    case PLANE_3_T:
+        plane[2][0] = Point(x, y);
+        overlay_mode = PLANE_3_B;
+        break;
+    case PLANE_3_B:
+        plane[2][1] = Point(x, y);
+        overlay_mode = PLANE_4_T;
+        break;
+    case PLANE_4_T:
+        plane[3][0] = Point(x, y);
+        overlay_mode = PLANE_4_B;
+        break;
+    case PLANE_4_B:
+        plane[3][1] = Point(x, y);
+        overlay_mode = NORMAL;
+        break;
     };
     show_overlay();
+}
+
+void Image::proc() {
+    vector<Point2i> x_pts, y_pts, z_pts;
+    for (int i=0; i<2; i++)
+        for (int j=0; j<2; j++) {
+            x_pts.push_back(para[0][i][j]);
+            y_pts.push_back(para[1][i][j]);
+            z_pts.push_back(para[2][i][j]);
+    }
+    if (p != nullptr) delete p;
+    p = new process(img_grey, x_pts, y_pts, z_pts, o, axis, ref);
+}
+
+void Image::texture() {
+    Mat proj;
+//    p->get_proj_matrix(proj);
+
+//    Mat hxy(3, 3, CV_64FC1);
+//    int colxy[3] = {0,1,3};
+//    for (int i=0; i<3; i++)
+//        for (int j=0; j<3; j++)
+//            hxy.at<double>(i, j) = proj.at<double>(i, colxy[j]);
+//    Mat xy;
+//    warpPerspective(img, xy, hxy.inv(), Size(img.cols, img.rows));
+//    cvtColor(xy, xy, CV_RGB2BGR);
+//    imwrite("xy.jpg", xy);
+
+//    Mat hxz(3, 3, CV_64FC1);
+//    int colxz[3] = {0,2,3};
+//    for (int i=0; i<3; i++)
+//        for (int j=0; j<3; j++)
+//            hxz.at<double>(i, j) = proj.at<double>(i, colxz[j]);
+//    Mat xz;
+//    warpPerspective(img, xz, hxz.inv(), Size(img.cols, img.rows));
+//    cvtColor(xz, xz, CV_RGB2BGR);
+//    imwrite("xz.jpg", xz);
+
+//    Mat hyz(3, 3, CV_64FC1);
+//    int colyz[3] = {1,2,3};
+//    for (int i=0; i<3; i++)
+//        for (int j=0; j<3; j++)
+//            hyz.at<double>(i, j) = proj.at<double>(i, colyz[j]);
+//    Mat yz;
+//    warpPerspective(img, yz, hyz.inv(), Size(img.cols, img.rows));
+//    cvtColor(yz, yz, CV_RGB2BGR);
+//    imwrite("yz.jpg", yz);
+
+//    Vector3d coord3d = p->calculate_coordinate(Point(488,229), Point(488,343), 2);
+//    qDebug("%f %f %f", coord3d[0], coord3d[1], coord3d[2]);
+
+    vector<Vector3d> pl3d;
+    for (int i=0; i<4; i++) {
+        pl3d.push_back(p->calculate_coordinate(plane[i][0], plane[i][1], 2));
+        qDebug("%f %f %f", pl3d[i][0], pl3d[i][1], pl3d[i][2]);
+    }
+    double len1 = (pl3d[0]-pl3d[1]).norm();
+    double len2 = (pl3d[0]-pl3d[3]).norm();
+    vector<Point> image_pts, origin_pts;
+    for (int i=0; i<4; i++)
+        image_pts.push_back(plane[i][0]);
+    origin_pts.push_back(Point(0,0));
+    origin_pts.push_back(Point(len1,0));
+    origin_pts.push_back(Point(len1,len2));
+    origin_pts.push_back(Point(0,len2));
+    Matrix3d h = p->compute_texture_matrix(image_pts, origin_pts);
+    proj = cv::Mat::zeros(3,3,CV_64FC1);
+    for(int i=0; i<3; i++)
+        for(int j=0; j<3; j++)
+            proj.at<double>(i,j)=h(i,j);
+    Mat tmap;
+    warpPerspective(img, tmap, proj.t(), Size(len1,len2));
+    cvtColor(tmap, tmap, CV_RGB2BGR);
+    imwrite("tmap.jpg", tmap);
 }

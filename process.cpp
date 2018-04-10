@@ -1,4 +1,5 @@
 #include "process.h"
+#include <QDebug>
 
 using namespace Eigen;
 
@@ -7,7 +8,7 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
     img=MatrixXd::Zero(grey_img.rows, grey_img.cols);
     for(int i=0; i<grey_img.rows; i++)
         for(int j=0; j<grey_img.cols; j++)
-            img(i,j)=grey_img.at<double>(i,j);
+            img(i,j)=(double)grey_img.at<uchar>(i,j);
 
     Vector3d x_pts_homo[2];
     Vector3d y_pts_homo[2];
@@ -103,10 +104,14 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
         ref[i].x()=ref_pts[i].x;
         ref[i].y()=ref_pts[i].y;
         ref[i].z()=1.0;
-        (this->scale)(i)=((ref[i]-(this->origin)).norm())/((vp_x-ref[i]).norm())/ref_len[i];
-        proj_mat.col(i)=vp_x*scale[i];
     }
-    proj_mat.col(3)=vl_xy/(vl_xy.norm());
+    (this->scale)(0)=((ref[0]-(this->origin)).sum())/((vp_x-ref[0]).sum())/ref_len[0];
+    (this->scale)(1)=((ref[1]-(this->origin)).sum())/((vp_y-ref[1]).sum())/ref_len[1];
+    (this->scale)(2)=((ref[2]-(this->origin)).sum())/((vp_z-ref[2]).sum())/ref_len[2];
+    proj_mat.col(0)=vp_x*scale[0];
+    proj_mat.col(1)=vp_y*scale[1];
+    proj_mat.col(2)=vp_z*scale[2];
+    proj_mat.col(3)<<this->origin;//vl_xy/(vl_xy.norm());
 
     texture_matrix=Matrix3d::Identity();
 
@@ -126,7 +131,7 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
 
     switch(cord){
         case 0:
-            x_w= -(origin.dot(vl_yz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_yz))*((vp_x.cross(homo_t)).norm())*scale.x());
+            x_w= (origin.dot(vl_yz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_yz))*((vp_x.cross(homo_t)).norm())*scale.x());
 
             y_cross=l_b_vpz.cross(origin.cross(vp_y));
             y_cross*=1/y_cross.z();
@@ -134,14 +139,14 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
             z_cross=l_b_vpy.cross(origin.cross(vp_z));
             z_cross*=1/z_cross.z();
 
-            y_w= -(origin.dot(vl_xz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
+            y_w= (origin.dot(vl_xz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
 
             z_w= -(origin.dot(vl_xy))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
             break;
 
         case 1:
-            y_w= -(origin.dot(vl_xz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xz))*((vp_y.cross(homo_t)).norm())*scale.y());
+            y_w= (origin.dot(vl_xz))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xz))*((vp_y.cross(homo_t)).norm())*scale.y());
 
             x_cross=l_b_vpz.cross(origin.cross(vp_x));
             x_cross*=1/x_cross.z();
@@ -151,7 +156,7 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
 
             z_w= -(origin.dot(vl_xy))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
-            x_w= -(origin.dot(vl_yz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
+            x_w= (origin.dot(vl_yz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
 
             break;
         case 2:
@@ -163,9 +168,9 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
             y_cross=l_b_vpx.cross(origin.cross(vp_y));
             y_cross*=1/y_cross.z();
 
-            y_w= -(origin.dot(vl_xz))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
+            y_w= (origin.dot(vl_xz))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
 
-            x_w= -(origin.dot(vl_yz))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
+            x_w= (origin.dot(vl_yz))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
 
             break;
 
@@ -194,7 +199,7 @@ Matrix3d process::compute_texture_matrix(const vector<cv::Point2i>& image_pts, c
         origin_pts[0].y, origin_pts[1].y, origin_pts[2].y, origin_pts[3].y;
 
     VectorXd A = (B.inverse())*X;
-    texture_matrix<< A(0), A(3), A(6), A(1), A(4), A(7), A(2), A(5), A(8), A(3), A(7), 1;
+    texture_matrix<< A(0), A(3), A(6), A(1), A(4), A(7), A(2), A(5), 1;
     return texture_matrix;
 }
 

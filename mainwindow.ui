@@ -235,6 +235,45 @@
      <string>Set Z reference</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="process">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>230</y>
+      <width>121</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Process</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="getTexture">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>250</y>
+      <width>121</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Get Texture Map</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="getPlane">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>270</y>
+      <width>121</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Get plane</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

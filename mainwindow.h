@@ -31,6 +31,9 @@ public slots:
     void set_x_ref();
     void set_y_ref();
     void set_z_ref();
+    void process();
+    void texture();
+    void plane();
 
 private:
     Ui::MainWindow *ui;

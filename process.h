@@ -21,8 +21,8 @@ public:
     Vector3d calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord);
     Matrix3d compute_texture_matrix(const vector<cv::Point2i>& image_pts, const vector<cv::Point2i>& origin_pts);
     Matrix3d get_texture_matrix(){return texture_matrix;}
-    cv::Mat get_proj_matrix(){
-        cv::Mat proj = cv::Mat::zeros(3,4,CV_64FC1);
+    void get_proj_matrix(cv::Mat & proj){
+        proj = cv::Mat::zeros(3,4,CV_64FC1);
         for(int i=0; i<3; i++)
             for(int j=0; j<4; j++)
                 *proj.ptr<double>(i,j) =proj_mat(i,j);

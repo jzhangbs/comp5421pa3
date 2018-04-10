@@ -30,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->setXRef, SIGNAL(clicked()), this, SLOT(set_x_ref()));
     connect(ui->setYRef, SIGNAL(clicked()), this, SLOT(set_y_ref()));
     connect(ui->setZRef, SIGNAL(clicked()), this, SLOT(set_z_ref()));
+    connect(ui->process, SIGNAL(clicked()), this, SLOT(process()));
+    connect(ui->getTexture, SIGNAL(clicked()), this, SLOT(texture()));
+    connect(ui->getPlane, SIGNAL(clicked()), this, SLOT(plane()));
 }
 
 MainWindow::~MainWindow()
@@ -118,4 +121,19 @@ void MainWindow::set_z_ref() {
     if (!image->img_opened) return;
     image->ref[2] = ui->zRef->text().toDouble();
     image->ref_done[2] = true;
+}
+
+void MainWindow::process() {
+    if (!image->img_opened) return;
+    image->proc();
+}
+
+void MainWindow::texture() {
+    if (!image->img_opened) return;
+    image->texture();
+}
+
+void MainWindow::plane() {
+    if (!image->img_opened) return;
+    image->overlay_mode = PLANE_1_T;
 }

@@ -1,6 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "process.h"
+
 #include "core.hpp"
 #include <cstring>
 #include <QLabel>
@@ -22,14 +24,24 @@
 #define X_PENDING        14
 #define Y_PENDING        15
 #define Z_PENDING        16
+#define PLANE_1_T        17
+#define PLANE_1_B        18
+#define PLANE_2_T        19
+#define PLANE_2_B        20
+#define PLANE_3_T        21
+#define PLANE_3_B        22
+#define PLANE_4_T        23
+#define PLANE_4_B        24
 
 class Image
 {
 public:
-    cv::Mat img;
+    cv::Mat img, img_grey;
     QLabel *label, *label_o;
     cv::Point para[3][2][2];
     cv::Point o, axis[3];
+    cv::Point plane[4][2];
+    std::vector<std::vector<Eigen::Vector3d>> plane3d;
 
     int overlay_mode;
     bool hide_para, hide_axis;
@@ -38,7 +50,10 @@ public:
 
     double ref[3];
 
+    process *p;
+
     Image();
+    ~Image();
 
     void set_label(QLabel *_label ,QLabel *_label_o);
 
@@ -47,6 +62,9 @@ public:
     void show_overlay(int x=-1, int y=-1);
 
     void draw_point(int x, int y);
+
+    void proc();
+    void texture();
 };
 
 #endif // IMAGE_H
