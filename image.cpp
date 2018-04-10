@@ -281,8 +281,9 @@ void Image::texture() {
 
     vector<Vector3d> pl3d;
     for (int i=0; i<4; i++) {
-        pl3d.push_back(p->calculate_coordinate(plane[i][0], plane[i][1], 2));
-        qDebug("%f %f %f", pl3d[i][0], pl3d[i][1], pl3d[i][2]);
+        int proj_dir = p->compute_parallel_axis(plane[i][0], plane[i][1]);
+        pl3d.push_back(p->calculate_coordinate(plane[i][0], plane[i][1], proj_dir));
+        qDebug("%d %f %f %f", proj_dir, pl3d[i][0], pl3d[i][1], pl3d[i][2]);
     }
     double len1 = (pl3d[0]-pl3d[1]).norm();
     double len2 = (pl3d[0]-pl3d[3]).norm();
@@ -311,7 +312,7 @@ void Image::vrml() {
 
     string shape1 = "Shape {\nappearance Appearance {\ntexture ImageTexture {\nurl \"";
     string shape2 = "\"\n}\n}\ngeometry IndexedFaceSet {\ncoord Coordinate {\npoint [\n";
-    string shape3 = "]\n}\ncoordIndex [0,1,2,3,-1]\nsolid FALSE}}";
+    string shape3 = "]\n}\ncoordIndex [0,1,2,3,-1]\ntexCoord TextureCoordinate{point[0. 1.,1. 1.,1. 0.,0. 0.,]}texCoordIndex[0,1,2,3,-1,]\nsolid FALSE}}";
 
     for (int i=0; i<plane3d.size(); i++) {
         header += shape1;
