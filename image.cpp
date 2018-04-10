@@ -6,6 +6,8 @@
 #include "imgcodecs.hpp"
 #include "imgproc.hpp"
 
+#include <fstream>
+
 using namespace std;
 using namespace cv;
 using namespace Eigen;
@@ -299,5 +301,33 @@ void Image::texture() {
     Mat tmap;
     warpPerspective(img, tmap, proj.t(), Size(len1,len2));
     cvtColor(tmap, tmap, CV_RGB2BGR);
-    imwrite("tmap.jpg", tmap);
+    imwrite(to_string(plane3d.size())+".jpg", tmap);
+    plane3d.push_back(pl3d);
+}
+
+void Image::vrml() {
+    string header = "#VRML V2.0 utf8\n\nCollision {\ncollide FALSE\nchildren [";
+    string tail = "]}";
+
+    string shape1 = "Shape {\nappearance Appearance {\ntexture ImageTexture {\nurl \"";
+    string shape2 = "\"\n}\n}\ngeometry IndexedFaceSet {\ncoord Coordinate {\npoint [\n";
+    string shape3 = "]\n}\ncoordIndex [0,1,2,3,-1]\nsolid FALSE}}";
+
+    for (int i=0; i<plane3d.size(); i++) {
+        header += shape1;
+        header += to_string(i)+".jpg";
+        header += shape2;
+        for (int j=0; j<plane3d[i].size(); j++) {
+            for (int k=0; k<3; k++) {
+                header += to_string(plane3d[i][j][k])+" ";
+            }
+            header += "\n";
+        }
+        header += shape3;
+    }
+    header += tail;
+
+    ofstream fin("o.wrl");
+    fin << header;
+    fin.close();
 }

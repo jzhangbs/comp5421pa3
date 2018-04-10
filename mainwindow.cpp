@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->process, SIGNAL(clicked()), this, SLOT(process()));
     connect(ui->getTexture, SIGNAL(clicked()), this, SLOT(texture()));
     connect(ui->getPlane, SIGNAL(clicked()), this, SLOT(plane()));
+    connect(ui->getVRML, SIGNAL(clicked()), this, SLOT(vrml()));
 }
 
 MainWindow::~MainWindow()
@@ -136,4 +137,9 @@ void MainWindow::texture() {
 void MainWindow::plane() {
     if (!image->img_opened) return;
     image->overlay_mode = PLANE_1_T;
+}
+
+void MainWindow::vrml() {
+    if (!image->img_opened) return;
+    image->vrml();
 }

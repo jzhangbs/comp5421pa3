@@ -34,6 +34,7 @@ public slots:
     void process();
     void texture();
     void plane();
+    void vrml();
 
 private:
     Ui::MainWindow *ui;

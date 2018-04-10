@@ -65,6 +65,7 @@ public:
 
     void proc();
     void texture();
+    void vrml();
 };
 
 #endif // IMAGE_H
