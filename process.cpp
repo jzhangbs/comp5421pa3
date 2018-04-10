@@ -104,7 +104,9 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
         ref[i].y()=ref_pts[i].y;
         ref[i].z()=1.0;
         (this->scale)(i)=((ref[i]-(this->origin)).norm())/((vp_x-ref[i]).norm())/ref_len[i];
+        proj_mat.col(i)=vp_x*scale[i];
     }
+    proj_mat.col(3)=vl_xy/(vl_xy.norm());
 
     texture_matrix=Matrix3d::Identity();
 
