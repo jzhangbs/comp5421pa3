@@ -2,8 +2,8 @@
 
 using namespace Eigen;
 
-process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, const vector<cv::Point2i>& y_pts, const vector<cv::Point2i>& z_pts, const cv::Point2i origin, const double scale[3])
-{
+process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, const vector<cv::Point2i>& y_pts, const vector<cv::Point2i>& z_pts, const cv::Point2i origin, const cv::Point2i ref_pts[3], double ref_len[3]){
+
     img=MatrixXd::Zero(grey_img.rows, grey_img.cols);
     for(int i=0; i<grey_img.rows; i++)
         for(int j=0; j<grey_img.cols; j++)
@@ -97,7 +97,15 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
     vl_yz*=1/(vl_xy.z());
 
     (this->origin)<< origin.x, origin.y, 1;
-    (this->scale)<< scale[0], scale[1], scale[2];
+
+    Vector3d ref[3];
+    for(int i=0; i<3; i++){
+        ref[i].x()=ref_pts[i].x;
+        ref[i].y()=ref_pts[i].y;
+        ref[i].z()=1.0;
+        (this->scale)(i)=((ref[i]-(this->origin)).norm())/((vp_x-ref[i]).norm())/ref_len[i];
+    }
+
     texture_matrix=Matrix3d::Identity();
 
 }
