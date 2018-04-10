@@ -203,3 +203,17 @@ Matrix3d process::compute_texture_matrix(const vector<cv::Point2i>& image_pts, c
     return texture_matrix;
 }
 
+int process::compute_parallel_axis(cv::Point2i pt1, cv::Point2i pt2){
+    Vector3d pt1_homo, pt2_homo;
+    pt1_homo.x()=pt1.x;
+    pt1_homo.y()=pt1.y;
+    pt1_homo.z()=1;
+    pt2_homo.x()=pt2.x;
+    pt2_homo.y()=pt2.y;
+    pt2_homo.z()=1;
+    double cos_axis[3];
+    cos_axis[0]=((pt1_homo-vp_x).dot(pt2_homo-vp_x))/((pt1_homo-vp_x).norm())/((pt2_homo-vp_x).norm());
+    cos_axis[1]=((pt1_homo-vp_y).dot(pt2_homo-vp_y))/((pt1_homo-vp_y).norm())/((pt2_homo-vp_y).norm());
+    cos_axis[2]=((pt1_homo-vp_z).dot(pt2_homo-vp_z))/((pt1_homo-vp_z).norm())/((pt2_homo-vp_z).norm());
+    return cos_axis[0]>cos_axis[1]? (cos_axis[0]>cos_axis[2]? 0:2):(cos_axis[1]>cos_axis[2]? 1:2);
+}
