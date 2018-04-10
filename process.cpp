@@ -105,9 +105,9 @@ process::process(const cv::Mat& grey_img, const vector<cv::Point2i>& x_pts, cons
         ref[i].y()=ref_pts[i].y;
         ref[i].z()=1.0;
     }
-    (this->scale)(0)=((ref[0]-(this->origin)).sum())/((vp_x-ref[0]).sum())/ref_len[0];
-    (this->scale)(1)=((ref[1]-(this->origin)).sum())/((vp_y-ref[1]).sum())/ref_len[1];
-    (this->scale)(2)=((ref[2]-(this->origin)).sum())/((vp_z-ref[2]).sum())/ref_len[2];
+    (this->scale)(0)=(((ref[0]-(this->origin)).sum())/((vp_x-ref[0]).sum())/ref_len[0])*(((ref[0]-(this->origin)).dot(vp_x-(this->origin))>0)*2-1);
+    (this->scale)(1)=(((ref[1]-(this->origin)).sum())/((vp_y-ref[1]).sum())/ref_len[1])*(((ref[1]-(this->origin)).dot(vp_y-(this->origin))>0)*2-1);
+    (this->scale)(2)=(((ref[2]-(this->origin)).sum())/((vp_z-ref[2]).sum())/ref_len[2])*(((ref[2]-(this->origin)).dot(vp_z-(this->origin))>0)*2-1);
     proj_mat.col(0)=vp_x*scale[0];
     proj_mat.col(1)=vp_y*scale[1];
     proj_mat.col(2)=vp_z*scale[2];
@@ -141,7 +141,7 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
 
             y_w= (origin.dot(vl_xz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_xz))*((vp_y.cross(homo_b)).norm())*scale.y());
 
-            z_w= -(origin.dot(vl_xy))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
+            z_w= (origin.dot(vl_xy))*((y_cross.cross(homo_b)).norm())/((y_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
             break;
 
@@ -154,13 +154,13 @@ Vector3d process::calculate_coordinate(cv::Point2i T, cv::Point2i B, int cord){
             z_cross=l_b_vpx.cross(origin.cross(vp_z));
             z_cross*=1/z_cross.z();
 
-            z_w= -(origin.dot(vl_xy))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
+            z_w= (origin.dot(vl_xy))*((x_cross.cross(homo_b)).norm())/((x_cross.dot(vl_xy))*((vp_z.cross(homo_b)).norm())*scale.z());
 
             x_w= (origin.dot(vl_yz))*((z_cross.cross(homo_b)).norm())/((z_cross.dot(vl_yz))*((vp_x.cross(homo_b)).norm())*scale.x());
 
             break;
         case 2:
-            z_w= -(origin.dot(vl_xy))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xy))*((vp_z.cross(homo_t)).norm())*scale.z());
+            z_w= (origin.dot(vl_xy))*((homo_b.cross(homo_t)).norm())/((homo_b.dot(vl_xy))*((vp_z.cross(homo_t)).norm())*scale.z());
 
             x_cross=l_b_vpy.cross(origin.cross(vp_x));
             x_cross*=1/x_cross.z();
