@@ -38,7 +38,7 @@ class Image
 public:
     cv::Mat img, img_grey;
     QLabel *label, *label_o;
-    cv::Point para[3][2][2];
+    std::vector<cv::Point> para[3];
     cv::Point o, axis[3];
     cv::Point plane[4][2];
     std::vector<std::vector<Eigen::Vector3d>> plane3d;

@@ -66,28 +66,28 @@ void Image::show_overlay(int x, int y) {
     switch (overlay_mode) {
     case X_PARA_1_PENDING:
         if (!hide_para)
-            line(overlay, para[0][0][0], Point(x, y), Scalar(255, 0, 0, 255), 2);
+            line(overlay, *para[0].rbegin(), Point(x, y), Scalar(255, 0, 0, 255), 2);
         break;
-    case X_PARA_2_PENDING:
-        if (!hide_para)
-            line(overlay, para[0][1][0], Point(x, y), Scalar(255, 0, 0, 255), 2);
-        break;
+//    case X_PARA_2_PENDING:
+//        if (!hide_para)
+//            line(overlay, para[0][1][0], Point(x, y), Scalar(255, 0, 0, 255), 2);
+//        break;
     case Y_PARA_1_PENDING:
         if (!hide_para)
-            line(overlay, para[1][0][0], Point(x, y), Scalar(0, 255, 0, 255), 2);
+            line(overlay, *para[1].rbegin(), Point(x, y), Scalar(0, 255, 0, 255), 2);
         break;
-    case Y_PARA_2_PENDING:
-        if (!hide_para)
-            line(overlay, para[1][1][0], Point(x, y), Scalar(0, 255, 0 ,255), 2);
-        break;
+//    case Y_PARA_2_PENDING:
+//        if (!hide_para)
+//            line(overlay, para[1][1][0], Point(x, y), Scalar(0, 255, 0 ,255), 2);
+//        break;
     case Z_PARA_1_PENDING:
         if (!hide_para)
-            line(overlay, para[2][0][0], Point(x, y), Scalar(0, 0, 255, 255), 2);
+            line(overlay, *para[2].rbegin(), Point(x, y), Scalar(0, 0, 255, 255), 2);
         break;
-    case Z_PARA_2_PENDING:
-        if (!hide_para)
-            line(overlay, para[2][1][0], Point(x, y), Scalar(0, 0, 255, 255), 2);
-        break;
+//    case Z_PARA_2_PENDING:
+//        if (!hide_para)
+//            line(overlay, para[2][1][0], Point(x, y), Scalar(0, 0, 255, 255), 2);
+//        break;
     case X_PENDING:
         if (!hide_axis)
             line(overlay, o, Point(x, y), Scalar(255, 255, 0, 255), 2);
@@ -100,11 +100,23 @@ void Image::show_overlay(int x, int y) {
         if (!hide_axis)
             line(overlay, o, Point(x, y), Scalar(255, 0, 255, 255), 2);
         break;
+    case PLANE_1_B:
+        line(overlay, plane[0][0], Point(x,y), Scalar(255, 0, 0, 255), 2);
+        break;
+    case PLANE_2_B:
+        line(overlay, plane[1][0], Point(x,y), Scalar(255, 0, 0, 255), 2);
+        break;
+    case PLANE_3_B:
+        line(overlay, plane[2][0], Point(x,y), Scalar(255, 0, 0, 255), 2);
+        break;
+    case PLANE_4_B:
+        line(overlay, plane[3][0], Point(x,y), Scalar(255, 0, 0, 255), 2);
+        break;
     };
     for (int i=0; i<3; i++)
-        for (int j=0; j<2; j++)
-            if (para_done[i][j] && !hide_para)
-                line(overlay, para[i][j][0], para[i][j][1], Scalar(255*(i==0), 255*(i==1), 255*(i==2), 255), 2);
+        for (int j=0; j<para[i].size()/2; j++)
+            if (!hide_para)
+                line(overlay, para[i][j*2], para[i][j*2+1], Scalar(255*(i==0), 255*(i==1), 255*(i==2), 255), 2);
     for (int i=0; i<3; i++)
         if (axis_done[i] && !hide_axis)
             line(overlay, axis[i], o, Scalar(255*(i!=1), 255*(i!=2), 255*(i!=0), 255), 2);
@@ -122,59 +134,59 @@ void Image::draw_point(int x, int y) {
     case NORMAL:
         return;
     case X_PARA_1_START:
-        para[0][0][0] = Point(x, y);
+        para[0].push_back(Point(x, y));
         overlay_mode = X_PARA_1_PENDING;
         break;
     case X_PARA_1_PENDING:
-        para[0][0][1] = Point(x, y);
-        overlay_mode = NORMAL;
+        para[0].push_back(Point(x, y));
+        overlay_mode = X_PARA_1_START;
         para_done[0][0] = true;
         break;
-    case X_PARA_2_START:
-        para[0][1][0] = Point(x, y);
-        overlay_mode = X_PARA_2_PENDING;
-        break;
-    case X_PARA_2_PENDING:
-        para[0][1][1] = Point(x, y);
-        overlay_mode = NORMAL;
-        para_done[0][1] = true;
-        break;
+//    case X_PARA_2_START:
+//        para[0][1][0] = Point(x, y);
+//        overlay_mode = X_PARA_2_PENDING;
+//        break;
+//    case X_PARA_2_PENDING:
+//        para[0][1][1] = Point(x, y);
+//        overlay_mode = NORMAL;
+//        para_done[0][1] = true;
+//        break;
     case Y_PARA_1_START:
-        para[1][0][0] = Point(x, y);
+        para[1].push_back(Point(x, y));
         overlay_mode = Y_PARA_1_PENDING;
         break;
     case Y_PARA_1_PENDING:
-        para[1][0][1] = Point(x, y);
-        overlay_mode = NORMAL;
+        para[1].push_back(Point(x, y));
+        overlay_mode = Y_PARA_1_START;
         para_done[1][0] = true;
         break;
-    case Y_PARA_2_START:
-        para[1][1][0] = Point(x, y);
-        overlay_mode = Y_PARA_2_PENDING;
-        break;
-    case Y_PARA_2_PENDING:
-        para[1][1][1] = Point(x, y);
-        overlay_mode = NORMAL;
-        para_done[1][1] = true;
-        break;
+//    case Y_PARA_2_START:
+//        para[1][1][0] = Point(x, y);
+//        overlay_mode = Y_PARA_2_PENDING;
+//        break;
+//    case Y_PARA_2_PENDING:
+//        para[1][1][1] = Point(x, y);
+//        overlay_mode = NORMAL;
+//        para_done[1][1] = true;
+//        break;
     case Z_PARA_1_START:
-        para[2][0][0] = Point(x, y);
+        para[2].push_back(Point(x, y));
         overlay_mode = Z_PARA_1_PENDING;
         break;
     case Z_PARA_1_PENDING:
-        para[2][0][1] = Point(x, y);
-        overlay_mode = NORMAL;
+        para[2].push_back(Point(x, y));
+        overlay_mode = Z_PARA_1_START;
         para_done[2][0] = true;
         break;
-    case Z_PARA_2_START:
-        para[2][1][0] = Point(x, y);
-        overlay_mode = Z_PARA_2_PENDING;
-        break;
-    case Z_PARA_2_PENDING:
-        para[2][1][1] = Point(x, y);
-        overlay_mode = NORMAL;
-        para_done[2][1] = true;
-        break;
+//    case Z_PARA_2_START:
+//        para[2][1][0] = Point(x, y);
+//        overlay_mode = Z_PARA_2_PENDING;
+//        break;
+//    case Z_PARA_2_PENDING:
+//        para[2][1][1] = Point(x, y);
+//        overlay_mode = NORMAL;
+//        para_done[2][1] = true;
+//        break;
     case ORIGIN:
         o = Point(x, y);
         overlay_mode = X_PENDING;
@@ -225,6 +237,7 @@ void Image::draw_point(int x, int y) {
     case PLANE_4_B:
         plane[3][1] = Point(x, y);
         overlay_mode = NORMAL;
+        texture();
         break;
     };
     show_overlay();
@@ -232,14 +245,14 @@ void Image::draw_point(int x, int y) {
 
 void Image::proc() {
     vector<Point2i> x_pts, y_pts, z_pts;
-    for (int i=0; i<2; i++)
-        for (int j=0; j<2; j++) {
-            x_pts.push_back(para[0][i][j]);
-            y_pts.push_back(para[1][i][j]);
-            z_pts.push_back(para[2][i][j]);
-    }
+//    for (int i=0; i<2; i++)
+//        for (int j=0; j<2; j++) {
+//            x_pts.push_back(para[0][i][j]);
+//            y_pts.push_back(para[1][i][j]);
+//            z_pts.push_back(para[2][i][j]);
+//    }
     if (p != nullptr) delete p;
-    p = new process(img_grey, x_pts, y_pts, z_pts, o, axis, ref);
+    p = new process(img_grey, para[0], para[1], para[2], o, axis, ref);
 }
 
 void Image::texture() {
@@ -302,7 +315,7 @@ void Image::texture() {
     Mat tmap;
     warpPerspective(img, tmap, proj.t(), Size(len1,len2));
     cvtColor(tmap, tmap, CV_RGB2BGR);
-    imwrite(to_string(plane3d.size())+".jpg", tmap);
+    imwrite(to_string(plane3d.size())+".png", tmap);
     plane3d.push_back(pl3d);
 }
 
@@ -316,7 +329,7 @@ void Image::vrml() {
 
     for (int i=0; i<plane3d.size(); i++) {
         header += shape1;
-        header += to_string(i)+".jpg";
+        header += to_string(i)+".png";
         header += shape2;
         for (int j=0; j<plane3d[i].size(); j++) {
             for (int k=0; k<3; k++) {

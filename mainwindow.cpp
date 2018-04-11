@@ -59,7 +59,7 @@ void MainWindow::x_para_1() {
 
 void MainWindow::x_para_2() {
     if (!image->img_opened) return;
-    image->overlay_mode = X_PARA_2_START;
+    image->overlay_mode = NORMAL;
     image->para_done[0][1] = false;
 }
 
