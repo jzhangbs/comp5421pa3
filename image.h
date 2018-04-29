@@ -65,6 +65,7 @@ public:
 
     void proc();
     void texture();
+    void del_texture();
     void vrml();
 };
 

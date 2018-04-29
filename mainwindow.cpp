@@ -21,9 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->drawXPara1, SIGNAL(clicked()), this, SLOT(x_para_1()));
     connect(ui->drawXPara2, SIGNAL(clicked()), this, SLOT(x_para_2()));
     connect(ui->drawYPara1, SIGNAL(clicked()), this, SLOT(y_para_1()));
-    connect(ui->drawYPara2, SIGNAL(clicked()), this, SLOT(y_para_2()));
+    //connect(ui->drawYPara2, SIGNAL(clicked()), this, SLOT(y_para_2()));
     connect(ui->drawZPara1, SIGNAL(clicked()), this, SLOT(z_para_1()));
-    connect(ui->drawZPara2, SIGNAL(clicked()), this, SLOT(z_para_2()));
+    //connect(ui->drawZPara2, SIGNAL(clicked()), this, SLOT(z_para_2()));
     connect(ui->drawAxis, SIGNAL(clicked()), this, SLOT(axis()));
     connect(ui->hidePara, SIGNAL(stateChanged(int)), this, SLOT(hide_para(int)));
     connect(ui->hideAxis, SIGNAL(stateChanged(int)), this, SLOT(hide_axis(int)));
@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->getTexture, SIGNAL(clicked()), this, SLOT(texture()));
     connect(ui->getPlane, SIGNAL(clicked()), this, SLOT(plane()));
     connect(ui->getVRML, SIGNAL(clicked()), this, SLOT(vrml()));
+    connect(ui->delTexture, SIGNAL(clicked()), this, SLOT(del_texture()));
 }
 
 MainWindow::~MainWindow()
@@ -142,4 +143,9 @@ void MainWindow::plane() {
 void MainWindow::vrml() {
     if (!image->img_opened) return;
     image->vrml();
+}
+
+void MainWindow::del_texture() {
+    if (!image->img_opened) return;
+    image->del_texture();
 }

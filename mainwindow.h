@@ -35,6 +35,7 @@ public slots:
     void texture();
     void plane();
     void vrml();
+    void del_texture();
 
 private:
     Ui::MainWindow *ui;

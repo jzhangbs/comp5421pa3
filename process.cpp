@@ -205,6 +205,8 @@ Matrix3d process::compute_texture_matrix(const vector<cv::Point2i>& image_pts, c
 
 int process::compute_parallel_axis(cv::Point2i pt1, cv::Point2i pt2){
     Vector3d pt1_homo, pt2_homo;
+    if (pt1.x==pt2.x && pt1.y==pt2.y)
+        return 2;
     pt1_homo.x()=pt1.x;
     pt1_homo.y()=pt1.y;
     pt1_homo.z()=1;

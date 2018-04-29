@@ -40,10 +40,10 @@ FORMS += \
         mainwindow.ui
 
 win32{INCLUDEPATH += \
-        C:/code/opencv/build/include \
-        C:/code/opencv/build/include/opencv \
-        C:/code/opencv/build/include/opencv2 \
-        C:\code\eigen-eigen-5a0156e40feb}
+        D:/code/opencv/build/include \
+        D:/code/opencv/build/include/opencv \
+        D:/code/opencv/build/include/opencv2 \
+        D:/code/eigen-eigen-5a0156e40feb}
 
 macx{INCLUDEPATH += \
     /usr/local/Cellar/opencv/3.4.0_1/include\
@@ -53,5 +53,5 @@ macx{INCLUDEPATH += \
     LIBS+= -L/usr/local/Cellar/opencv/3.4.0_1/lib -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_dpm -lopencv_face -lopencv_photo -lopencv_fuzzy -lopencv_img_hash -lopencv_line_descriptor -lopencv_optflow -lopencv_reg -lopencv_rgbd -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_surface_matching -lopencv_tracking -lopencv_datasets -lopencv_text -lopencv_dnn -lopencv_plot -lopencv_xfeatures2d -lopencv_shape -lopencv_video -lopencv_ml -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_flann -lopencv_xobjdetect -lopencv_imgcodecs -lopencv_objdetect -lopencv_xphoto -lopencv_imgproc -lopencv_core
 }
 
-win32:CONFIG(release, debug|release): LIBS += C:/code/opencv/build/x64/vc15/lib/opencv_world341.lib
-else:win32:CONFIG(debug, debug|release): LIBS += C:/code/opencv/build/x64/vc15/lib/opencv_world341d.lib
+win32:CONFIG(release, debug|release): LIBS += D:/code/opencv/build/x64/vc15/lib/opencv_world340.lib
+else:win32:CONFIG(debug, debug|release): LIBS += D:/code/opencv/build/x64/vc15/lib/opencv_world340d.lib

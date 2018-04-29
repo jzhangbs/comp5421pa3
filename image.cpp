@@ -345,3 +345,8 @@ void Image::vrml() {
     fin << header;
     fin.close();
 }
+
+void Image::del_texture() {
+    if (plane3d.size()>0)
+        plane3d.pop_back();
+}
